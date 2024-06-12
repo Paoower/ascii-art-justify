@@ -52,25 +52,74 @@ func main() {
 		return
 	}
 
-	// Store line and get line of input
 	lines := make([]string, 0)
 	words := strings.Split(input, "\\n")
 
-	for _, word := range words {
-		if word == "" {
-			lines = append(lines, "")
-		} else {
-			lines = append(lines, src.GetWord(word, bannerFile)...)
+	if align == "justify" {
+		numOfSpaces := strings.Count(input, " ")
+
+		for _, word := range words {
+			if word == "" {
+				lines = append(lines, "")
+			} else {
+				lines = append(lines, src.GetWord(Trim(word), bannerFile)...)
+			}
 		}
+
+		lenOfOneLine := len(lines[0])
+		spacesToRemain := getTerminalWidth() - lenOfOneLine
+
+		lines = []string{}
+		lines = append(lines, src.GetJustifiedAscii(input, style, spacesToRemain, numOfSpaces)...)
 	}
 
-	// Apply alignment
-	width := getTerminalWidth()
-	lines = src.ApplyAlignment(lines, align, width)
+	if align == "center" {
+		for _, word := range words {
+			if word == "" {
+				lines = append(lines, "")
+			} else {
+				lines = append(lines, src.GetWord(word, bannerFile)...)
+			}
+		}
+
+		lenOfOneLine := len(lines[0])
+		spacesToRemain := getTerminalWidth() - lenOfOneLine
+
+		lines = []string{}
+		lines = append(lines, src.GetCenteredAscii(input, style, spacesToRemain, 2)...)
+	}
+
+	if align == "right" {
+		for _, word := range words {
+			if word == "" {
+				lines = append(lines, "")
+			} else {
+				lines = append(lines, src.GetWord(word, bannerFile)...)
+			}
+		}
+
+		lenOfOneLine := len(lines[0])
+		spacesToRemain := getTerminalWidth() - lenOfOneLine
+
+		lines = []string{}
+
+		lines = append(lines, src.GetCenteredAscii(input, style, spacesToRemain, 1)...)
+	}
+
+	if align == "left" {
+		for _, word := range words {
+			if word == "" {
+				lines = append(lines, "")
+			} else {
+				lines = append(lines, src.GetWord(word, bannerFile)...)
+			}
+		}
+	}
 
 	for _, line := range lines {
 		fmt.Println(line)
 	}
+
 }
 
 // Get the width of the terminal
@@ -86,4 +135,14 @@ func getTerminalWidth() int {
 		return 80 // default width
 	}
 	return int(dimensions[1])
+}
+
+func Trim(s string) string {
+	str := ""
+	for _, char := range s {
+		if char != ' ' {
+			str += string(char)
+		}
+	}
+	return str
 }

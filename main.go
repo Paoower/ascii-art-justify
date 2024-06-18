@@ -55,7 +55,7 @@ func main() {
 			if word == "" {
 				lines = append(lines, "")
 			} else {
-				getW, err := src.GetWord(word, bannerFile)
+				getW, err := src.GetWord(Trim(word), bannerFile)
 				if err != nil {
 					fmt.Println(err)
 				}
